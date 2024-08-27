@@ -29,7 +29,7 @@ window_x = int((screen_width/2) - (window_width/2))
 window_y = int((screen_height/2) - (window_height/2))
 
 #format "(w)x(h) + (x) + (y)"
-window.geometry(f"{window_width} x {window_height} + {window_x} + {window_y}")
+window.geometry(f"{window_width}x{window_height}+{window_x}+{window_y}")
 
 
 
