@@ -4,9 +4,11 @@ import random
 ROWS = 25
 COLS = 25
 TILE_SIZE = 25
+TEXT_OFFSET = 50
 
 WINDOW_HEIGHT = TILE_SIZE * ROWS
 WINDOW_WIDTH = TILE_SIZE * COLS
+
 
 class Tile:
         def __init__(self,x,y):
@@ -18,10 +20,10 @@ window = tkinter.Tk()
 window.title("Snake")
 window.resizable(False, False)      #keeps height+width from changing
 
-
 canvas = tkinter.Canvas(window, bg = "black", width = WINDOW_WIDTH, height = WINDOW_HEIGHT, borderwidth =0, highlightthickness = 0 )
 canvas.pack()
 window.update()
+windowid = None #variable for closing the draw loop on gameover
 
 #center the window
 window_width = window.winfo_width()
@@ -46,7 +48,7 @@ score = 0
 
 def reset():
      global snake, food, snake_body, velocityX, velocityY, game_over, score
-     snake_body = [] #multiple snake tiles
+     snake_body.clear()
      velocityX = 0
      velocityY = 0
      game_over = False
@@ -54,6 +56,7 @@ def reset():
      canvas.delete("all")
      snake = Tile(5*TILE_SIZE,5*TILE_SIZE) #single tile, snake's head
      food = Tile(10 * TILE_SIZE, 10 * TILE_SIZE)
+
      draw()
      
 
@@ -67,11 +70,6 @@ def change_direction(e): #e = event
     
 
     if (game_over and e.keysym == "space"):
-          #print("we are got back to change direction")
-          velocityX = 0
-          velocityY = 0
-          game_over = False
-          score = 0
           reset()
          
     if (game_over):
@@ -92,7 +90,7 @@ def change_direction(e): #e = event
          velocityY = 0        
     
 def move():
-     global snake, food, snake_body, game_over, score
+     global snake, food, snake_body, game_over, velocityX, velocityY, score
      
      #game over = stop snake from moving
      if (game_over):
@@ -136,7 +134,7 @@ def move():
         
 
 def draw():
-    global snake, food, snake_body, game_over, score
+    global snake, food, snake_body, game_over, score, windowid
                          #using snake var within this function uses the global snake
     
     move()              #calls move function (moves every 1/10 second or 10 frames per second)
@@ -154,13 +152,18 @@ def draw():
           
           
     if (game_over):
-         canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, font = "Arial 20", text = f"Game Over: {score}", fill = "white")
-         canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 50, font = "Arial 15", text = "Try Again? (press space)", fill = "white")
+         canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - TEXT_OFFSET * 2, font = "Arial 20", text = f"Game Over", fill = "white")
+         canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - TEXT_OFFSET / 2, font = "Arial 15", text = f"Score: {score}", fill = "white")
+         canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + TEXT_OFFSET, font = "Arial 15", text = "Try Again? (press space)", fill = "white")       
+         window.after_cancel(windowid)  
     else:
+         windowid = window.after(100,draw) #every 100ms, call draw function (10fps)
          canvas.create_text(30, 20, font = "Arial 10", text = f"Score: {score}", fill = "white")
-
-    window.after(100,draw) #every 100ms, call draw function (10fps)
-
+    
+  #  if (game_over == False):
+          
+   # else:
+         
 draw()
 
 window.bind("<KeyRelease>", change_direction)
