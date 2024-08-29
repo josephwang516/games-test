@@ -1,2 +1,4 @@
 # games-test
-testing github with some new projects
+testing github between mac & pc
+coding games on different languages:
+  1. Snake in python
