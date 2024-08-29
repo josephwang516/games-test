@@ -44,14 +44,39 @@ velocityY = 0
 game_over = False
 score = 0
 
+def reset():
+     global snake, food, snake_body, velocityX, velocityY, game_over, score
+     snake_body = [] #multiple snake tiles
+     velocityX = 0
+     velocityY = 0
+     game_over = False
+     score = 0
+     canvas.delete("all")
+     snake = Tile(5*TILE_SIZE,5*TILE_SIZE) #single tile, snake's head
+     food = Tile(10 * TILE_SIZE, 10 * TILE_SIZE)
+     draw()
+     
+
+
+
 
 def change_direction(e): #e = event
     #print(e)
     #print(e.keysym)
     global velocityX, velocityY, game_over
+    
+
+    if (game_over and e.keysym == "space"):
+          #print("we are got back to change direction")
+          velocityX = 0
+          velocityY = 0
+          game_over = False
+          score = 0
+          reset()
+         
     if (game_over):
           return
-     
+    
     
     if (e.keysym == "Up" and velocityY != 1):
          velocityX = 0
@@ -113,6 +138,7 @@ def move():
 def draw():
     global snake, food, snake_body, game_over, score
                          #using snake var within this function uses the global snake
+    
     move()              #calls move function (moves every 1/10 second or 10 frames per second)
     
     canvas.delete("all") #updates the board
@@ -129,6 +155,7 @@ def draw():
           
     if (game_over):
          canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, font = "Arial 20", text = f"Game Over: {score}", fill = "white")
+         canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 50, font = "Arial 15", text = "Try Again? (press space)", fill = "white")
     else:
          canvas.create_text(30, 20, font = "Arial 10", text = f"Score: {score}", fill = "white")
 
